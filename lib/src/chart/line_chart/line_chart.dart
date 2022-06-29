@@ -42,9 +42,11 @@ class _LineChartState extends AnimatedWidgetBaseState<LineChart> {
 
   /// If [LineTouchData.handleBuiltInTouches] is true, we override the callback to handle touches internally,
   /// but we need to keep the provided callback to notify it too.
-  BaseTouchCallback<LineTouchResponse>? _providedTouchCallback;
+  BaseTouchCallback<LineTouchResponse>? _providedLineTouchCallback;
 
-  final List<ShowingTooltipIndicators> _showingTouchedTooltips = [];
+  final Map<int, List<int>> _showingBarGroupTouchedTooltips = {};
+
+  final List<ShowingTooltipIndicators> _showingSpotTouchedTooltips = [];
 
   final Map<int, List<int>> _showingTouchedIndicators = {};
 
@@ -63,26 +65,46 @@ class _LineChartState extends AnimatedWidgetBaseState<LineChart> {
   }
 
   LineChartData _withTouchedIndicators(LineChartData lineChartData) {
-    if (!lineChartData.lineTouchData.enabled ||
-        !lineChartData.lineTouchData.handleBuiltInTouches) {
-      return lineChartData;
+    LineChartData newLineChartData = lineChartData;
+
+    if (lineChartData.lineTouchData.enabled ||
+        lineChartData.lineTouchData.handleBuiltInTouches) {
+      newLineChartData = newLineChartData.copyWith(
+          showingTooltipIndicators: _showingSpotTouchedTooltips,
+          lineBarsData: lineChartData.lineBarsData.map((barData) {
+            final index = lineChartData.lineBarsData.indexOf(barData);
+
+            return barData.copyWith(
+              showingIndicators: _showingTouchedIndicators[index] ?? [],
+            );
+          }).toList());
     }
 
-    return lineChartData.copyWith(
-      showingTooltipIndicators: _showingTouchedTooltips,
-      lineBarsData: lineChartData.lineBarsData.map((barData) {
-        final index = lineChartData.lineBarsData.indexOf(barData);
-        return barData.copyWith(
-          showingIndicators: _showingTouchedIndicators[index] ?? [],
+    if (lineChartData.barTouchData.enabled ||
+        lineChartData.barTouchData.handleBuiltInTouches) {
+      final newGroups = <BarChartGroupData>[];
+      for (var i = 0; i < lineChartData.barGroups.length; i++) {
+        final group = lineChartData.barGroups[i];
+
+        newGroups.add(
+          group.copyWith(
+            showingTooltipIndicators: _showingBarGroupTouchedTooltips[i],
+          ),
         );
-      }).toList(),
-    );
+      }
+
+      newLineChartData = newLineChartData.copyWith(
+        barGroups: newGroups,
+      );
+    }
+
+    return newLineChartData;
   }
 
   LineChartData _getData() {
     final lineTouchData = widget.data.lineTouchData;
     if (lineTouchData.enabled && lineTouchData.handleBuiltInTouches) {
-      _providedTouchCallback = lineTouchData.touchCallback;
+      _providedLineTouchCallback = lineTouchData.touchCallback;
       return widget.data.copyWith(
         lineTouchData: widget.data.lineTouchData
             .copyWith(touchCallback: _handleBuiltInTouch),
@@ -93,31 +115,51 @@ class _LineChartState extends AnimatedWidgetBaseState<LineChart> {
 
   void _handleBuiltInTouch(
       FlTouchEvent event, LineTouchResponse? touchResponse) {
-    _providedTouchCallback?.call(event, touchResponse);
+    _providedLineTouchCallback?.call(event, touchResponse);
 
-    if (!event.isInterestedForInteractions ||
-        touchResponse?.lineBarSpots == null ||
-        touchResponse!.lineBarSpots!.isEmpty) {
+    if (!event.isInterestedForInteractions) {
       setState(() {
-        _showingTouchedTooltips.clear();
+        _showingSpotTouchedTooltips.clear();
+        _showingBarGroupTouchedTooltips.clear();
         _showingTouchedIndicators.clear();
       });
       return;
     }
 
     setState(() {
-      final sortedLineSpots = List.of(touchResponse.lineBarSpots!);
-      sortedLineSpots.sort((spot1, spot2) => spot2.y.compareTo(spot1.y));
+      List<LineBarSpot> sortedLineSpots = [];
+      if (touchResponse?.lineBarSpots != null &&
+          touchResponse!.lineBarSpots!.isNotEmpty) {
+        sortedLineSpots = List.of(touchResponse.lineBarSpots!);
+        sortedLineSpots.sort((spot1, spot2) => spot2.y.compareTo(spot1.y));
 
-      _showingTouchedIndicators.clear();
-      for (var i = 0; i < touchResponse.lineBarSpots!.length; i++) {
-        final touchedBarSpot = touchResponse.lineBarSpots![i];
-        final barPos = touchedBarSpot.barIndex;
-        _showingTouchedIndicators[barPos] = [touchedBarSpot.spotIndex];
+        _showingTouchedIndicators.clear();
+        for (var i = 0; i < touchResponse.lineBarSpots!.length; i++) {
+          final touchedBarSpot = touchResponse.lineBarSpots![i];
+          final barPos = touchedBarSpot.barIndex;
+          _showingTouchedIndicators[barPos] = [touchedBarSpot.spotIndex];
+        }
       }
 
-      _showingTouchedTooltips.clear();
-      _showingTouchedTooltips.add(ShowingTooltipIndicators(sortedLineSpots));
+      List<int> showingBarGroups = [];
+
+      if (touchResponse?.barTouchedSpot != null) {
+        final groupIndex = touchResponse!.barTouchedSpot!.touchedBarGroupIndex;
+        final rodIndex = touchResponse.barTouchedSpot!.touchedRodDataIndex;
+
+        _showingBarGroupTouchedTooltips.clear();
+        _showingBarGroupTouchedTooltips[groupIndex] = [rodIndex];
+        showingBarGroups = _showingBarGroupTouchedTooltips[groupIndex]!;
+      }
+
+      _showingBarGroupTouchedTooltips.clear();
+
+      _showingSpotTouchedTooltips.clear();
+
+    
+
+      _showingSpotTouchedTooltips
+          .add(ShowingTooltipIndicators(sortedLineSpots, showingBarGroups));
     });
   }
 

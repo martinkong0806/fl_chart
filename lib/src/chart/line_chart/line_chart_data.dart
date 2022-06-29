@@ -26,6 +26,10 @@ class LineChartData extends AxisChartData with EquatableMixin {
   /// Handles touch behaviors and responses.
   final LineTouchData lineTouchData;
 
+  final List<BarChartGroupData> barGroups;
+
+  final BarTouchData barTouchData;
+
   /// You can show some tooltipIndicators (a popup with an information)
   /// on top of each [LineChartBarData.spots] using [showingTooltipIndicators],
   /// just put line indicator number and spots indices you want to show it on top of them.
@@ -60,10 +64,12 @@ class LineChartData extends AxisChartData with EquatableMixin {
   /// [clipData] forces the [LineChart] to draw lines inside the chart bounding box.
   LineChartData({
     List<LineChartBarData>? lineBarsData,
+    List<BarChartGroupData>? barGroups,
     List<BetweenBarsData>? betweenBarsData,
     FlTitlesData? titlesData,
     ExtraLinesData? extraLinesData,
     LineTouchData? lineTouchData,
+    BarTouchData? barTouchData,
     List<ShowingTooltipIndicators>? showingTooltipIndicators,
     FlGridData? gridData,
     FlBorderData? borderData,
@@ -77,9 +83,11 @@ class LineChartData extends AxisChartData with EquatableMixin {
     FlClipData? clipData,
     Color? backgroundColor,
   })  : lineBarsData = lineBarsData ?? const [],
+        barGroups = barGroups ?? const [],
         betweenBarsData = betweenBarsData ?? const [],
         extraLinesData = extraLinesData ?? ExtraLinesData(),
         lineTouchData = lineTouchData ?? LineTouchData(),
+        barTouchData = barTouchData ?? BarTouchData(),
         showingTooltipIndicators = showingTooltipIndicators ?? const [],
         super(
           gridData: gridData ?? FlGridData(),
@@ -127,6 +135,8 @@ class LineChartData extends AxisChartData with EquatableMixin {
             RangeAnnotations.lerp(a.rangeAnnotations, b.rangeAnnotations, t),
         lineBarsData:
             lerpLineChartBarDataList(a.lineBarsData, b.lineBarsData, t),
+        barGroups:
+            lerpBarChartGroupDataListAsDouble(a.barGroups, b.barGroups, t),
         betweenBarsData:
             lerpBetweenBarsDataList(a.betweenBarsData, b.betweenBarsData, t),
         lineTouchData: b.lineTouchData,
@@ -141,11 +151,13 @@ class LineChartData extends AxisChartData with EquatableMixin {
   /// and replaces provided values.
   LineChartData copyWith({
     List<LineChartBarData>? lineBarsData,
+    List<BarChartGroupData>? barGroups,
     List<BetweenBarsData>? betweenBarsData,
     FlTitlesData? titlesData,
     RangeAnnotations? rangeAnnotations,
     ExtraLinesData? extraLinesData,
     LineTouchData? lineTouchData,
+    BarTouchData? barTouchData,
     List<ShowingTooltipIndicators>? showingTooltipIndicators,
     FlGridData? gridData,
     FlBorderData? borderData,
@@ -160,11 +172,13 @@ class LineChartData extends AxisChartData with EquatableMixin {
   }) {
     return LineChartData(
       lineBarsData: lineBarsData ?? this.lineBarsData,
+      barGroups: barGroups ?? this.barGroups,
       betweenBarsData: betweenBarsData ?? this.betweenBarsData,
       titlesData: titlesData ?? this.titlesData,
       rangeAnnotations: rangeAnnotations ?? this.rangeAnnotations,
       extraLinesData: extraLinesData ?? this.extraLinesData,
       lineTouchData: lineTouchData ?? this.lineTouchData,
+      barTouchData: barTouchData ?? this.barTouchData,
       showingTooltipIndicators:
           showingTooltipIndicators ?? this.showingTooltipIndicators,
       gridData: gridData ?? this.gridData,
@@ -1796,15 +1810,18 @@ class TouchedSpotIndicatorData with EquatableMixin {
 class ShowingTooltipIndicators with EquatableMixin {
   /// Determines the spots that each tooltip should be shown.
   final List<LineBarSpot> showingSpots;
+  final List<int> showingBarGroups;
 
   /// [LineChart] shows some tooltips over each [LineChartBarData],
   /// and [showingSpots] determines in which spots this tooltip should be shown.
-  ShowingTooltipIndicators(List<LineBarSpot> showingSpots)
-      : showingSpots = showingSpots;
+  ShowingTooltipIndicators(
+    List<LineBarSpot> showingSpots,
+    List<int> showingBarGroups,
+  ) : showingSpots = showingSpots , showingBarGroups = showingBarGroups;
 
   /// Used for equality check, see [EquatableMixin].
   @override
-  List<Object?> get props => [showingSpots];
+  List<Object?> get props => [showingSpots, showingBarGroups];
 }
 
 /// Holds information about touch response in the [LineChart].
@@ -1816,21 +1833,46 @@ class LineTouchResponse extends BaseTouchResponse {
   /// (if a single line provided on the chart, [lineBarSpots]'s length will be 1 always)
   final List<TouchLineBarSpot>? lineBarSpots;
 
+  final BarTouchedSpot? barTouchedSpot;
+
   /// If touch happens, [LineChart] processes it internally and
   /// passes out a list of [lineBarSpots] it gives you information about the touched spot.
   /// They are sorted based on their distance to the touch event
-  LineTouchResponse(this.lineBarSpots) : super();
+  LineTouchResponse(this.lineBarSpots, this.barTouchedSpot) : super();
 
   /// Copies current [LineTouchResponse] to a new [LineTouchResponse],
   /// and replaces provided values.
-  LineTouchResponse copyWith({
-    List<TouchLineBarSpot>? lineBarSpots,
-  }) {
-    return LineTouchResponse(
-      lineBarSpots ?? this.lineBarSpots,
-    );
+  LineTouchResponse copyWith(
+      {List<TouchLineBarSpot>? lineBarSpots, BarTouchedSpot? barTouchedSpot}) {
+    return LineTouchResponse(lineBarSpots ?? this.lineBarSpots,
+        barTouchedSpot ?? this.barTouchedSpot);
   }
 }
+
+// /// Holds information about touch response in the [LineChart].
+// ///
+// /// You can override [LineTouchData.touchCallback] to handle touch events,
+// /// it gives you a [LineTouchResponse] and you can do whatever you want.
+// class BarLineTouchResponse extends BaseTouchResponse {
+//   /// touch happened on these spots
+//   /// (if a single line provided on the chart, [lineBarSpots]'s length will be 1 always)
+//   final List<TouchLineBarSpot>? lineBarSpots;
+
+//   /// If touch happens, [LineChart] processes it internally and
+//   /// passes out a list of [lineBarSpots] it gives you information about the touched spot.
+//   /// They are sorted based on their distance to the touch event
+//   BarLineTouchResponse(this.lineBarSpots) : super();
+
+//   /// Copies current [LineTouchResponse] to a new [LineTouchResponse],
+//   /// and replaces provided values.
+//   BarLineTouchResponse copyWith({
+//     List<TouchLineBarSpot>? lineBarSpots,
+//   }) {
+//     return BarLineTouchResponse(
+//       lineBarSpots ?? this.lineBarSpots,
+//     );
+//   }
+// }
 
 /// It lerps a [LineChartData] to another [LineChartData] (handles animation for updating values)
 class LineChartDataTween extends Tween<LineChartData> {

@@ -61,7 +61,7 @@ void main() {
           ShowingTooltipIndicators([
             LineBarSpot(bar1, 0, bar1.spots.first),
             LineBarSpot(bar2, 1, bar2.spots.first),
-          ])
+          ],[])
         ],
         lineTouchData: LineTouchData(
           enabled: true,
@@ -169,7 +169,7 @@ void main() {
             LineBarSpot(bar2, 1, bar1.spots[2]),
             LineBarSpot(bar2, 1, bar1.spots[3]),
             LineBarSpot(bar2, 1, bar1.spots[4]),
-          ])
+          ],[])
         ],
       );
 
@@ -2088,7 +2088,7 @@ void main() {
             0,
             barData.spots.first,
           ),
-        ]),
+        ],[]),
         holder,
       );
 
@@ -2210,7 +2210,7 @@ void main() {
       final LineChartPainter lineChartPainter = LineChartPainter();
       final holder = PaintHolder<LineChartData>(data, data, 1.0);
       final touchResponse =
-          lineChartPainter.handleTouch(const Offset(35, 0), viewSize, holder);
+          lineChartPainter.handleSpotTouch(const Offset(35, 0), viewSize, holder);
       expect(touchResponse, null);
     });
 
@@ -2271,16 +2271,16 @@ void main() {
       final holder = PaintHolder<LineChartData>(data, data, 1.0);
       expect(
           lineChartPainter
-              .handleTouch(const Offset(30, 0), viewSize, holder)!
+              .handleSpotTouch(const Offset(30, 0), viewSize, holder)!
               .length,
           1);
       expect(
-          lineChartPainter.handleTouch(
+          lineChartPainter.handleSpotTouch(
               const Offset(29.99, 0), viewSize, holder),
           null);
       expect(
           lineChartPainter
-              .handleTouch(const Offset(10.0, 0), viewSize, holder)!
+              .handleSpotTouch(const Offset(10.0, 0), viewSize, holder)!
               .length,
           2);
     });
@@ -2342,12 +2342,12 @@ void main() {
       final holder = PaintHolder<LineChartData>(data, data, 1.0);
 
       final result1 =
-          lineChartPainter.handleTouch(const Offset(11, 0), viewSize, holder)!;
+          lineChartPainter.handleSpotTouch(const Offset(11, 0), viewSize, holder)!;
       expect(result1[0].barIndex, 0);
       expect(result1[1].barIndex, 1);
 
       final result2 =
-          lineChartPainter.handleTouch(const Offset(12, 0), viewSize, holder)!;
+          lineChartPainter.handleSpotTouch(const Offset(12, 0), viewSize, holder)!;
       expect(result2[0].barIndex, 1);
       expect(result2[1].barIndex, 0);
     });

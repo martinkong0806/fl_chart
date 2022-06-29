@@ -104,7 +104,7 @@ class LineChartSample5 extends StatelessWidget {
             return ShowingTooltipIndicators([
               LineBarSpot(tooltipsOnBar, lineBarsData.indexOf(tooltipsOnBar),
                   tooltipsOnBar.spots[index]),
-            ]);
+            ],[]);
           }).toList(),
           lineTouchData: LineTouchData(
             enabled: false,

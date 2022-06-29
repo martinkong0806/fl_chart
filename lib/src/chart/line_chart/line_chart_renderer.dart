@@ -90,11 +90,17 @@ class RenderLineChart extends RenderBaseChart<LineTouchResponse> {
 
   @override
   LineTouchResponse getResponseAtLocation(Offset localPosition) {
-    var touchedSpots = painter.handleTouch(
+    var touchedSpots = painter.handleSpotTouch(
       localPosition,
       mockTestSize ?? size,
       paintHolder,
     );
-    return LineTouchResponse(touchedSpots);
+
+    var touchedBarGroups = painter.handleBarGroupTouch(
+      localPosition,
+      mockTestSize ?? size,
+      paintHolder,
+    );
+    return LineTouchResponse(touchedSpots, touchedBarGroups);
   }
 }

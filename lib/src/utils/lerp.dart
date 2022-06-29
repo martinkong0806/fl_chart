@@ -98,6 +98,10 @@ List<BarChartGroupData>? lerpBarChartGroupDataList(
         List<BarChartGroupData>? a, List<BarChartGroupData>? b, double t) =>
     lerpList(a, b, t, lerp: BarChartGroupData.lerp);
 
+List<BarChartGroupData>? lerpBarChartGroupDataListAsDouble(
+        List<BarChartGroupData>? a, List<BarChartGroupData>? b, double t) =>
+    lerpList(a, b, t, lerp: BarChartGroupData.lerpAsDouble);
+
 /// Lerps [BarChartRodData] list based on [t] value, check [Tween.lerp].
 List<BarChartRodData>? lerpBarChartRodDataList(
         List<BarChartRodData>? a, List<BarChartRodData>? b, double t) =>

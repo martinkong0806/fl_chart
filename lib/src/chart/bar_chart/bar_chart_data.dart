@@ -175,7 +175,7 @@ enum BarChartAlignment {
 class BarChartGroupData with EquatableMixin {
   /// defines the group's value among the x axis (simply set it incrementally).
   @required
-  final int x;
+  final num x;
 
   /// If set true, it will show bars below/above each other.
   /// Otherwise, it will show bars beside each other.
@@ -201,7 +201,7 @@ class BarChartGroupData with EquatableMixin {
   /// on top of each [BarChartRodData] using [showingTooltipIndicators],
   /// just put indices you want to show it on top of them.
   BarChartGroupData({
-    required int x,
+    required num x,
     bool? groupVertically,
     List<BarChartRodData>? barRods,
     double? barsSpace,
@@ -233,7 +233,7 @@ class BarChartGroupData with EquatableMixin {
   /// Copies current [BarChartGroupData] to a new [BarChartGroupData],
   /// and replaces provided values.
   BarChartGroupData copyWith({
-    int? x,
+    num? x,
     bool? groupVertically,
     List<BarChartRodData>? barRods,
     double? barsSpace,
@@ -254,6 +254,18 @@ class BarChartGroupData with EquatableMixin {
       BarChartGroupData a, BarChartGroupData b, double t) {
     return BarChartGroupData(
       x: (a.x + (b.x - a.x) * t).round(),
+      groupVertically: b.groupVertically,
+      barRods: lerpBarChartRodDataList(a.barRods, b.barRods, t),
+      barsSpace: lerpDouble(a.barsSpace, b.barsSpace, t),
+      showingTooltipIndicators: lerpIntList(
+          a.showingTooltipIndicators, b.showingTooltipIndicators, t),
+    );
+  }
+
+  static BarChartGroupData lerpAsDouble(
+      BarChartGroupData a, BarChartGroupData b, double t) {
+    return BarChartGroupData(
+      x: (a.x + (b.x - a.x) * t),
       groupVertically: b.groupVertically,
       barRods: lerpBarChartRodDataList(a.barRods, b.barRods, t),
       barsSpace: lerpDouble(a.barsSpace, b.barsSpace, t),
@@ -755,10 +767,10 @@ typedef GetBarTooltipItem = BarTooltipItem? Function(
 
 /// Default implementation for [BarTouchTooltipData.getTooltipItem].
 BarTooltipItem? defaultBarTooltipItem(
-  BarChartGroupData group,
-  int groupIndex,
+  BarChartGroupData? group,
+  int? groupIndex,
   BarChartRodData rod,
-  int rodIndex,
+  int? rodIndex,
 ) {
   final color = rod.gradient?.colors.first ?? rod.color;
   final textStyle = TextStyle(

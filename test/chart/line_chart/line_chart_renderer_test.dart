@@ -82,7 +82,16 @@ void main() {
 
     test('test 3 check getResponseAtLocation function', () {
       List<Map<String, dynamic>> results = [];
-      when(mockPainter.handleTouch(captureAny, captureAny, captureAny))
+      when(mockPainter.handleSpotTouch(captureAny, captureAny, captureAny))
+          .thenAnswer((inv) {
+        results.add({
+          'local_position': inv.positionalArguments[0] as Offset,
+          'size': inv.positionalArguments[1] as Size,
+          'paint_holder': (inv.positionalArguments[2] as PaintHolder),
+        });
+        return MockData.lineTouchResponse1.lineBarSpots;
+      });
+      when(mockPainter.handleBarGrTouch(captureAny, captureAny, captureAny))
           .thenAnswer((inv) {
         results.add({
           'local_position': inv.positionalArguments[0] as Offset,

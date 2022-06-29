@@ -1,25 +1,23 @@
+import 'dart:math' as math;
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-class LineChartSample2 extends StatefulWidget {
-  const LineChartSample2({Key? key}) : super(key: key);
+Color primary =
+    HSLColor.fromColor(Color(0xff233c7b)).withLightness(0.75).toColor();
+
+class LineChartSample11 extends StatefulWidget {
+  const LineChartSample11({Key? key}) : super(key: key);
 
   @override
-  _LineChartSample2State createState() => _LineChartSample2State();
+  _LineChartSample11State createState() => _LineChartSample11State();
 }
 
-class _LineChartSample2State extends State<LineChartSample2> {
+class _LineChartSample11State extends State<LineChartSample11> {
   List<Color> gradientColors = [
     const Color(0xff23b6e6),
     const Color(0xff02d39a),
   ];
-
-  static final mainItems = <double, List<double>>{
-    1.2: [2, 3, 1, 2],
-    2: [1.5, 2, 1, 2],
-    3: [1.5, 1.5, 1, 1],
-    6: [1.2, 2, 5, 2],
-  };
 
   BarChartGroupData generateGroup(
     double x,
@@ -37,8 +35,9 @@ class _LineChartSample2State extends State<LineChartSample2> {
       showingTooltipIndicators: isTouched ? [0] : [],
       barRods: [
         BarChartRodData(
+          color: const Color(0xff4fbba9),
           toY: sum,
-          width: 10,
+          width: 7.5,
           borderRadius: isTop
               ? const BorderRadius.only(
                   topLeft: Radius.circular(6),
@@ -48,11 +47,10 @@ class _LineChartSample2State extends State<LineChartSample2> {
                   bottomLeft: Radius.circular(6),
                   bottomRight: Radius.circular(6),
                 ),
-          borderSide: 
-           BorderSide(
-                color: Colors.white,
-                width: isTouched ? 2 : 0,
-              ),
+          borderSide: BorderSide(
+            color: Colors.white,
+            width: isTouched ? 2 : 0,
+          ),
           // rodStackItems: [
           //   BarChartRodStackItem(
           //     0,
@@ -116,26 +114,8 @@ class _LineChartSample2State extends State<LineChartSample2> {
               padding: const EdgeInsets.only(
                   right: 18.0, left: 12.0, top: 24, bottom: 12),
               child: LineChart(
-                showAvg ? avgData() : mainData(),
+                mainData(),
               ),
-            ),
-          ),
-        ),
-        SizedBox(
-          width: 60,
-          height: 34,
-          child: TextButton(
-            onPressed: () {
-              setState(() {
-                showAvg = !showAvg;
-              });
-            },
-            child: Text(
-              'avg',
-              style: TextStyle(
-                  fontSize: 12,
-                  color:
-                      showAvg ? Colors.white.withOpacity(0.5) : Colors.white),
             ),
           ),
         ),
@@ -149,26 +129,13 @@ class _LineChartSample2State extends State<LineChartSample2> {
       fontWeight: FontWeight.bold,
       fontSize: 16,
     );
-    Widget text;
-    switch (value.toInt()) {
-      case 2:
-        text = const Text('MAR', style: style);
-        break;
-      case 5:
-        text = const Text('JUN', style: style);
-        break;
-      case 8:
-        text = const Text('SEP', style: style);
-        break;
-      default:
-        text = const Text('', style: style);
-        break;
-    }
+
+    String text = value % 2 ==0 ? value.toInt().toString(): '';
 
     return SideTitleWidget(
       axisSide: meta.axisSide,
       space: 8.0,
-      child: text,
+      child: Text(text),
     );
   }
 
@@ -178,28 +145,27 @@ class _LineChartSample2State extends State<LineChartSample2> {
       fontWeight: FontWeight.bold,
       fontSize: 15,
     );
-    String text;
-    switch (value.toInt()) {
-      case 1:
-        text = '10K';
-        break;
-      case 3:
-        text = '30k';
-        break;
-      case 5:
-        text = '50k';
-        break;
-      default:
-        return Container();
-    }
 
-    return Text(text, style: style, textAlign: TextAlign.left);
+    String text = value % 2 == 0 ? value.toInt().toString() : '';
+
+    return Text(text,
+        style: style, textAlign: TextAlign.left);
   }
 
   LineChartData mainData() {
+    var mainItems = <double, List<double>>{
+      0.5: [2, 3, 1, 2],
+      1.5: [1.5, 2, 1, 2],
+      2.5: [1.5, 1.5, 1, 1],
+      3.5: [1.2, 1, 1, 1],
+      4.5: [1.2, 1, 1, 1],
+      5.5: [1.2, 1, 1, 1],
+      7.5: [0.2, 0.2, 0.2, 1],
+      12.5: [0.2, 0.2, 0.2, 0],
+    };
     return LineChartData(
       gridData: FlGridData(
-        show: true,
+        show: false,
         drawVerticalLine: true,
         horizontalInterval: 1,
         verticalInterval: 1,
@@ -241,15 +207,49 @@ class _LineChartSample2State extends State<LineChartSample2> {
           ),
         ),
       ),
+      minY: 0,
+      maxY: 10,
       borderData: FlBorderData(
           show: true,
           border: Border.all(color: const Color(0xff37434d), width: 1)),
-  
-
       lineTouchData: LineTouchData(
-        handleBuiltInTouches: false,
+        enabled: true,
+        handleBuiltInTouches: true,
+        getTouchLineStart: (LineChartBarData barData, int spotIndex) {
+          return barData.spots[spotIndex].y;
+        },
+      distanceCalculator: (Offset touchPoint, Offset spotPixelCoordinates) {
+          return math.sqrt(((touchPoint.dx - spotPixelCoordinates.dx) ).abs() + ((touchPoint.dy - spotPixelCoordinates.dy)).abs());
+        },
+        touchSpotThreshold: 5,
+        touchTooltipData: LineTouchTooltipData(
+          getTooltipItems: (touchedSpots) {
+            return touchedSpots
+                .map((e) =>
+                    LineTooltipItem('${e.y} at ${e.x}', const TextStyle()))
+                .toList();
+          },
+        ),
+        getTouchedSpotIndicator:
+            (LineChartBarData barData, List<int> indicators) {
+          return indicators.map((int index) {
+            /// Indicator Line
+            var lineColor = Colors.transparent;
+
+            const lineStrokeWidth = 4.0;
+            final flLine =
+                FlLine(color: lineColor, strokeWidth: lineStrokeWidth);
+
+            final dotData =
+                FlDotData(getDotPainter: (spot, percent, bar, index) {
+              return FlDotCirclePainter(
+                  radius: 6, color: primary, strokeWidth: 0);
+            });
+
+            return TouchedSpotIndicatorData(flLine, dotData);
+          }).toList();
+        },
         touchCallback: (FlTouchEvent event, LineTouchResponse? touchResponse) {
-    
           if (!event.isInterestedForInteractions ||
               touchResponse == null ||
               touchResponse.barTouchedSpot == null) {
@@ -258,7 +258,6 @@ class _LineChartSample2State extends State<LineChartSample2> {
             });
             return;
           }
-    
           setState(() {
             touchedIndex = touchResponse.barTouchedSpot!.spot.x;
           });
@@ -270,136 +269,44 @@ class _LineChartSample2State extends State<LineChartSample2> {
           .toList(),
       lineBarsData: [
         LineChartBarData(
+          color: primary,
+          isStepLineChart: true,
           spots: const [
-            FlSpot(0, 3),
-            FlSpot(2.6, 9),
-            FlSpot(4.9, 5),
-            FlSpot(6.8, 13),
-            FlSpot(8, 4),
-            FlSpot(9.5, 3),
-            FlSpot(11, 4),
+            FlSpot(0, 9),
+            FlSpot(1, 9),
+            FlSpot(2, 9),
+            FlSpot(3, 9),
+            FlSpot(4, 6),
+            FlSpot(5, 6),
+            FlSpot(6, 6),
+            FlSpot(7, 6),
+            FlSpot(8, 6),
+            FlSpot(9, 6),
+            FlSpot(10, 6),
+            FlSpot(11, 6),
+            FlSpot(12, 6),
+            FlSpot(13, 6),
+            FlSpot(14, 9),
+            FlSpot(15, 9),
+            FlSpot(16, 9),
+            FlSpot(17, 9),
+            FlSpot(18, 6),
+            FlSpot(19, 6),
+            FlSpot(20, 6),
+            FlSpot(21, 6),
+            FlSpot(22, 6),
+            FlSpot(23, 6),
+            FlSpot(24, 6)
           ],
           isCurved: true,
-          gradient: LinearGradient(
-            colors: gradientColors,
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-          ),
-          barWidth: 5,
+          barWidth: 2,
           isStrokeCapRound: true,
           dotData: FlDotData(
-            show: false,
-          ),
-          belowBarData: BarAreaData(
-            show: true,
-            gradient: LinearGradient(
-              colors: gradientColors
-                  .map((color) => color.withOpacity(0.3))
-                  .toList(),
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  LineChartData avgData() {
-    return LineChartData(
-      lineTouchData: LineTouchData(enabled: false),
-      gridData: FlGridData(
-        show: true,
-        drawHorizontalLine: true,
-        verticalInterval: 1,
-        horizontalInterval: 1,
-        getDrawingVerticalLine: (value) {
-          return FlLine(
-            color: const Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
-        getDrawingHorizontalLine: (value) {
-          return FlLine(
-            color: const Color(0xff37434d),
-            strokeWidth: 1,
-          );
-        },
-      ),
-      titlesData: FlTitlesData(
-        show: true,
-        bottomTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            reservedSize: 30,
-            getTitlesWidget: bottomTitleWidgets,
-            interval: 1,
-          ),
-        ),
-        leftTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            getTitlesWidget: leftTitleWidgets,
-            reservedSize: 42,
-            interval: 1,
-          ),
-        ),
-        topTitles: AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-        rightTitles: AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-      ),
-      borderData: FlBorderData(
-          show: true,
-          border: Border.all(color: const Color(0xff37434d), width: 1)),
-      minX: 0,
-      maxX: 11,
-      minY: 0,
-      maxY: 6,
-      lineBarsData: [
-        LineChartBarData(
-          spots: const [
-            FlSpot(0, 3.44),
-            FlSpot(2.6, 3.44),
-            FlSpot(4.9, 3.44),
-            FlSpot(6.8, 3.44),
-            FlSpot(8, 3.44),
-            FlSpot(9.5, 3.44),
-            FlSpot(11, 3.44),
-          ],
-          isCurved: true,
-          gradient: LinearGradient(
-            colors: [
-              ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                  .lerp(0.2)!,
-              ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                  .lerp(0.2)!,
-            ],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-          ),
-          barWidth: 5,
-          isStrokeCapRound: true,
-          dotData: FlDotData(
-            show: false,
-          ),
-          belowBarData: BarAreaData(
-            show: true,
-            gradient: LinearGradient(
-              colors: [
-                ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                    .lerp(0.2)!
-                    .withOpacity(0.1),
-                ColorTween(begin: gradientColors[0], end: gradientColors[1])
-                    .lerp(0.2)!
-                    .withOpacity(0.1),
-              ],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-            ),
-          ),
+              show: true,
+              getDotPainter: (spot, percent, bar, index) {
+                return FlDotCirclePainter(
+                    radius: 3, color: primary, strokeWidth: 0);
+              }),
         ),
       ],
     );
