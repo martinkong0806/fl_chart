@@ -62,7 +62,6 @@ class BarChartPainter extends AxisChartPainter<BarChartData> {
     drawBars(canvasWrapper, _groupBarsPosition!, holder);
 
     for (var i = 0; i < targetData.barGroups.length; i++) {
-      
       final barGroup = targetData.barGroups[i];
       for (var j = 0; j < barGroup.barRods.length; j++) {
         if (!barGroup.showingTooltipIndicators.contains(j)) {
@@ -512,7 +511,6 @@ class BarChartPainter extends AxisChartPainter<BarChartData> {
     final data = holder.data;
     final targetData = holder.targetData;
     final touchedPoint = localPosition;
-
 
     if (targetData.barGroups.isEmpty) {
       return null;

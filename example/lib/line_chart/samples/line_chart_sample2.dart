@@ -48,11 +48,10 @@ class _LineChartSample2State extends State<LineChartSample2> {
                   bottomLeft: Radius.circular(6),
                   bottomRight: Radius.circular(6),
                 ),
-          borderSide: 
-           BorderSide(
-                color: Colors.white,
-                width: isTouched ? 2 : 0,
-              ),
+          borderSide: BorderSide(
+            color: Colors.white,
+            width: isTouched ? 2 : 0,
+          ),
           // rodStackItems: [
           //   BarChartRodStackItem(
           //     0,
@@ -244,12 +243,9 @@ class _LineChartSample2State extends State<LineChartSample2> {
       borderData: FlBorderData(
           show: true,
           border: Border.all(color: const Color(0xff37434d), width: 1)),
-  
-
       lineTouchData: LineTouchData(
         handleBuiltInTouches: false,
         touchCallback: (FlTouchEvent event, LineTouchResponse? touchResponse) {
-    
           if (!event.isInterestedForInteractions ||
               touchResponse == null ||
               touchResponse.barTouchedSpot == null) {
@@ -258,7 +254,7 @@ class _LineChartSample2State extends State<LineChartSample2> {
             });
             return;
           }
-    
+
           setState(() {
             touchedIndex = touchResponse.barTouchedSpot!.spot.x;
           });

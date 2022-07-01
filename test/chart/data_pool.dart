@@ -1038,43 +1038,31 @@ final TouchLineBarSpot lineBarSpot3 = TouchLineBarSpot(
   2,
 );
 
-final LineTouchResponse lineTouchResponse1 = LineTouchResponse(
-  [
-    lineBarSpot1,
-    lineBarSpot2,
-  ],null
-);
-final LineTouchResponse lineTouchResponse1Clone = LineTouchResponse(
-  [
-    lineBarSpot1Clone,
-    lineBarSpot2,
-  ], null
-);
+final LineTouchResponse lineTouchResponse1 = LineTouchResponse([
+  lineBarSpot1,
+  lineBarSpot2,
+], null);
+final LineTouchResponse lineTouchResponse1Clone = LineTouchResponse([
+  lineBarSpot1Clone,
+  lineBarSpot2,
+], null);
 
-final LineTouchResponse lineTouchResponse2 = LineTouchResponse(
-  [
-    lineBarSpot2,
-    lineBarSpot1,
-  ],null
-);
+final LineTouchResponse lineTouchResponse2 = LineTouchResponse([
+  lineBarSpot2,
+  lineBarSpot1,
+], null);
 
-final LineTouchResponse lineTouchResponse3 = LineTouchResponse(
-  [],null
-);
+final LineTouchResponse lineTouchResponse3 = LineTouchResponse([], null);
 
-final LineTouchResponse lineTouchResponse4 = LineTouchResponse(
-  [
-    lineBarSpot1,
-    lineBarSpot2,
-  ],null
-);
+final LineTouchResponse lineTouchResponse4 = LineTouchResponse([
+  lineBarSpot1,
+  lineBarSpot2,
+], null);
 
-final LineTouchResponse lineTouchResponse5 = LineTouchResponse(
-  [
-    lineBarSpot1,
-    lineBarSpot2,
-  ],null
-);
+final LineTouchResponse lineTouchResponse5 = LineTouchResponse([
+  lineBarSpot1,
+  lineBarSpot2,
+], null);
 
 final TouchedSpotIndicatorData touchedSpotIndicatorData1 =
     TouchedSpotIndicatorData(
@@ -1834,29 +1822,17 @@ final BetweenBarsData betweenBarsData8 = BetweenBarsData(
 );
 
 final ShowingTooltipIndicators showingTooltipIndicator1 =
-    ShowingTooltipIndicators(
-  [lineBarSpot1, lineBarSpot2],[]
-);
+    ShowingTooltipIndicators([lineBarSpot1, lineBarSpot2], []);
 final ShowingTooltipIndicators showingTooltipIndicator1Clone =
-    ShowingTooltipIndicators(
-  [lineBarSpot1, lineBarSpot2],[]
-);
+    ShowingTooltipIndicators([lineBarSpot1, lineBarSpot2], []);
 final ShowingTooltipIndicators showingTooltipIndicator2 =
-    ShowingTooltipIndicators(
-  [],[]
-);
+    ShowingTooltipIndicators([], []);
 final ShowingTooltipIndicators showingTooltipIndicator3 =
-    ShowingTooltipIndicators(
-  [lineBarSpot2],[]
-);
+    ShowingTooltipIndicators([lineBarSpot2], []);
 final ShowingTooltipIndicators showingTooltipIndicator4 =
-    ShowingTooltipIndicators(
-  [lineBarSpot2, lineBarSpot1],[]
-);
+    ShowingTooltipIndicators([lineBarSpot2, lineBarSpot1], []);
 final ShowingTooltipIndicators showingTooltipIndicator5 =
-    ShowingTooltipIndicators(
-  [lineBarSpot1, lineBarSpot2, lineBarSpot2],[]
-);
+    ShowingTooltipIndicators([lineBarSpot1, lineBarSpot2, lineBarSpot2], []);
 
 final LineChartData lineChartData1 = LineChartData(
   borderData: borderData1,

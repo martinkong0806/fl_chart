@@ -170,8 +170,6 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
       tooltipSpots =
           ShowingTooltipIndicators(barSpots, tooltipSpots.showingBarGroups);
 
-     
-
       BarChartGroupData? showOnBarGroup;
       int? barGroupIndex;
       BarChartRodData? showOnRodData;
@@ -200,7 +198,6 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
         holder,
       );
     }
-
   }
 
   @visibleForTesting
@@ -1516,7 +1513,6 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
     Size viewSize,
     PaintHolder<LineChartData> holder,
   ) {
-    final data = holder.data;
     final targetData = holder.targetData;
     final touchedPoint = localPosition;
 
@@ -1633,6 +1629,7 @@ class LineChartPainter extends AxisChartPainter<LineChartData> {
         }
       }
     }
+    return null;
   }
 
   @visibleForTesting

@@ -4,7 +4,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 Color primary =
-    HSLColor.fromColor(Color(0xff233c7b)).withLightness(0.75).toColor();
+    HSLColor.fromColor(const Color(0xff233c7b)).withLightness(0.75).toColor();
 
 class LineChartSample11 extends StatefulWidget {
   const LineChartSample11({Key? key}) : super(key: key);
@@ -124,13 +124,7 @@ class _LineChartSample11State extends State<LineChartSample11> {
   }
 
   Widget bottomTitleWidgets(double value, TitleMeta meta) {
-    const style = TextStyle(
-      color: Color(0xff68737d),
-      fontWeight: FontWeight.bold,
-      fontSize: 16,
-    );
-
-    String text = value % 2 ==0 ? value.toInt().toString(): '';
+    String text = value % 2 == 0 ? value.toInt().toString() : '';
 
     return SideTitleWidget(
       axisSide: meta.axisSide,
@@ -148,8 +142,7 @@ class _LineChartSample11State extends State<LineChartSample11> {
 
     String text = value % 2 == 0 ? value.toInt().toString() : '';
 
-    return Text(text,
-        style: style, textAlign: TextAlign.left);
+    return Text(text, style: style, textAlign: TextAlign.left);
   }
 
   LineChartData mainData() {
@@ -218,8 +211,9 @@ class _LineChartSample11State extends State<LineChartSample11> {
         getTouchLineStart: (LineChartBarData barData, int spotIndex) {
           return barData.spots[spotIndex].y;
         },
-      distanceCalculator: (Offset touchPoint, Offset spotPixelCoordinates) {
-          return math.sqrt(((touchPoint.dx - spotPixelCoordinates.dx) ).abs() + ((touchPoint.dy - spotPixelCoordinates.dy)).abs());
+        distanceCalculator: (Offset touchPoint, Offset spotPixelCoordinates) {
+          return math.sqrt(((touchPoint.dx - spotPixelCoordinates.dx)).abs() +
+              ((touchPoint.dy - spotPixelCoordinates.dy)).abs());
         },
         touchSpotThreshold: 5,
         touchTooltipData: LineTouchTooltipData(

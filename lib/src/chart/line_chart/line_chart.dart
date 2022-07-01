@@ -156,8 +156,6 @@ class _LineChartState extends AnimatedWidgetBaseState<LineChart> {
 
       _showingSpotTouchedTooltips.clear();
 
-    
-
       _showingSpotTouchedTooltips
           .add(ShowingTooltipIndicators(sortedLineSpots, showingBarGroups));
     });

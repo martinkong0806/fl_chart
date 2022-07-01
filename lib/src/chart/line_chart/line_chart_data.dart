@@ -1817,7 +1817,8 @@ class ShowingTooltipIndicators with EquatableMixin {
   ShowingTooltipIndicators(
     List<LineBarSpot> showingSpots,
     List<int> showingBarGroups,
-  ) : showingSpots = showingSpots , showingBarGroups = showingBarGroups;
+  )   : showingSpots = showingSpots,
+        showingBarGroups = showingBarGroups;
 
   /// Used for equality check, see [EquatableMixin].
   @override
